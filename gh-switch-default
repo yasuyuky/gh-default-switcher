@@ -25,4 +25,4 @@ if [[ -f protection.json ]]; then
     gh api repos/$slug/branches/$to/protection -X PUT -f $(cat protection.json)
     rm protection.json
 fi
-git push origin :master
+git push origin :$from
