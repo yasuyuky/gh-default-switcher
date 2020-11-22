@@ -1,0 +1,25 @@
+#!/bin/sh -e
+
+gh --version
+jq --version
+
+slug=$1
+to=${2:-main}
+from=$(gh api repos/$slug | jq -r .default_branch)
+
+test $from != "null"
+
+echo FROM: $from
+echo TO: $to
+
+gh api repos/$slug/branches/$from/protection |
+    jq 'walk(if type=="object" then with_entries(select(.key|endswith("url")|not)) else . end)' \
+        >protection.json
+
+git branch -m $from $to
+git push -u origin
+
+gh api repos/$slug -X PATCH -F default_branch=$to
+gh api repos/$slug/branches/$to/protection -X PUT -f <(protection.json)
+
+git push origin :master
