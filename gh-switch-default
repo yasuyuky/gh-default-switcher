@@ -13,7 +13,11 @@ echo FROM: $from
 echo TO: $to
 
 gh api repos/$slug/branches/$from/protection |
-    jq 'walk(if type=="object" then with_entries(select(.key|endswith("url")|not)) else . end)' \
+    jq 'walk(if type=="object" then with_entries(select(.key|endswith("url")|not)) else . end)' |
+    jq 'if has("required_status_checks") then . else . + {"required_status_checks": null}  end' |
+    jq 'if has("enforce_admins") then . else . + {"enforce_admins": null}  end' |
+    jq 'if has("required_pull_request_reviews") then . else . + {"required_pull_request_reviews": null}  end' |
+    jq 'if has("restrictions") then . else . + {"restrictions": null}  end' \
         >protection.json || true
 
 git branch -m $from $to
