@@ -17,7 +17,7 @@ gh api repos/$slug/branches/$from/protection |
         >protection.json
 
 git branch -m $from $to
-git push -u origin
+git push -u origin $to
 
 gh api repos/$slug -X PATCH -F default_branch=$to
 gh api repos/$slug/branches/$to/protection -X PUT -f <(protection.json)
