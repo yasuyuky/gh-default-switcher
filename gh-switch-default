@@ -22,6 +22,7 @@ git push -u origin $to
 gh api repos/$slug -X PATCH -F default_branch=$to
 
 if [[ -f protection.json ]]; then
+    gh api repos/$slug/branches/$from/protection -X DELETE
     gh api repos/$slug/branches/$to/protection -X PUT --input protection.json
     rm protection.json
 fi
