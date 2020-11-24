@@ -21,6 +21,7 @@ gh api repos/$slug/branches/$from/protection |
     jq 'walk(if type=="object" and has("enabled") then .enabled else . end)' \
         >protection.json || true
 
+git pull origin $from
 git branch -m $from $to
 git push -u origin $to
 
